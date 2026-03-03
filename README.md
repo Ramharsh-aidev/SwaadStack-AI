@@ -97,31 +97,55 @@ A **Hybrid Two-Tower + Sequential Transformer** architecture that:
 ## 📁 Directory Structure
 
 ```
-swaad-stack-ai/
-├── 📄 config.py              # Centralized configuration (all hyperparameters)
-├── 📄 utils.py               # Shared utilities (MMR, encoding, logging)
-├── 📄 data_generator.py      # Synthetic data generation pipeline
-├── 📄 model.py               # Two-Tower + Transformer architecture (PyTorch)
-├── 📄 train.py               # Training pipeline with temporal split
-├── 📄 feature_store.py       # Redis-based online feature store
-├── 📄 inference_engine.py    # FAISS indexing + MMR re-ranking engine
-├── 📄 app.py                 # FastAPI serving application
-├── 📄 test_swaadstack.py     # Comprehensive test suite (35+ tests)
-├── 📄 requirements.txt       # Python dependencies
-├── 📄 Dockerfile             # Multi-stage production Docker image
-├── 📄 docker-compose.yml     # Service orchestration (API + Redis)
-├── 📄 .env                   # Environment variables
-├── 📄 .gitignore             # Git ignore rules
-├── 📄 README.md              # This file
-├── 📁 data/                  # Generated data artifacts
-│   ├── menu.json             # Menu items + embeddings
-│   ├── sessions.csv          # Training sessions
-│   ├── item_embeddings.npy   # Raw embedding matrix
-│   └── id_mapping.json       # Item ID ↔ index mapping
-├── 📁 models/                # Trained model artifacts
-│   ├── swaadstack_model.pth  # Model weights
-│   └── projected_item_embeddings.npy  # FAISS-ready embeddings
-└── 📁 logs/                  # Application logs
+swaadstack/
+├── Dockerfile
+├── docker-compose.yml
+├── README.md
+├── .gitignore
+├── .env
+├── api/
+│   ├── app.py
+│   ├── middleware.py
+│   ├── schemas.py
+│   └── routes/
+│       ├── health.py
+│       ├── menu.py
+│       └── recommend.py
+├── config/
+│   └── settings.py
+├── data/
+│   ├── embeddings.py
+│   ├── generator.py
+│   ├── menu_items.py
+│   ├── pairing_rules.py
+│   └── pipeline.py
+├── inference/
+│   ├── engine.py
+│   └── feature_store.py
+├── models/
+│   ├── factory.py
+│   ├── swaadstack.py
+│   └── towers.py
+├── scripts/
+│   ├── generate_data.py
+│   ├── start_server.py
+│   └── train_model.py
+├── training/
+│   ├── dataset.py
+│   ├── metrics.py
+│   ├── pipeline.py
+│   └── trainer.py
+├── utils/
+│   ├── embeddings.py
+│   ├── encoding.py
+│   ├── helpers.py
+│   ├── logging.py
+│   ├── mmr.py
+│   └── scoring.py
+└── tests/
+  ├── unit/
+  ├── integration/
+  └── performance/
 ```
 
 ---
