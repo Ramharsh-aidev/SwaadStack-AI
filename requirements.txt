@@ -1,0 +1,49 @@
+# ==============================================================================
+# SwaadStack AI - Dependencies
+# Real-Time Meal Completion Recommendation Engine
+# ==============================================================================
+
+# --- Core ML ---
+torch
+torchvision
+
+# --- NLP & Embeddings ---
+sentence-transformers
+transformers
+
+# --- Vector Search ---
+faiss-cpu
+
+# --- Synthetic Data Generation ---
+sdv
+ctgan
+
+# --- Data Processing ---
+pandas
+numpy
+scikit-learn
+scipy
+
+# --- API & Serving ---
+fastapi
+uvicorn[standard]
+pydantic
+httpx
+
+# --- Feature Store ---
+redis
+hiredis
+
+# --- Monitoring & Logging ---
+structlog
+prometheus-client
+
+# --- Testing ---
+pytest
+pytest-asyncio
+pytest-cov
+
+# --- Utilities ---
+python-dotenv
+tqdm
+rich
