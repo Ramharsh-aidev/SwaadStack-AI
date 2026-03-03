@@ -129,5 +129,3 @@ docker-compose.override.yml
 data/*.json
 data/*.csv
 data/*.npy
-
-*.md
