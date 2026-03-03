@@ -1,0 +1,107 @@
+# ==============================================================================
+# SwaadStack AI Modular - Docker Compose Configuration
+# ==============================================================================
+# Services:
+#   1. api: FastAPI recommendation engine (the core service)
+#   2. redis: Online feature store for real-time feature serving
+#   3. redis-commander: Redis GUI (development only)
+# ==============================================================================
+
+version: "3.9"
+
+services:
+  # ── SwaadStack API Service ──
+  api:
+    build:
+      context: ..
+      dockerfile: swaadstack/Dockerfile
+    container_name: swaadstack-api
+    ports:
+      - "8000:8000"
+    environment:
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - API_WORKERS=4
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - DEBUG=false
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./artifacts/data:/app/swaadstack/artifacts/data        # Persist generated data
+      - ./artifacts/models:/app/swaadstack/artifacts/models    # Persist trained models
+      - ./logs:/app/swaadstack/logs        # Persist logs
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: "2.0"
+        reservations:
+          memory: 2G
+          cpus: "1.0"
+    networks:
+      - swaadstack-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ── Redis Feature Store ──
+  redis:
+    image: redis:7-alpine
+    container_name: swaadstack-redis-v2
+    ports:
+      - "6380:6379"
+    command: >
+      redis-server
+        --maxmemory 512mb
+        --maxmemory-policy allkeys-lru
+        --appendonly yes
+        --appendfsync everysec
+        --tcp-keepalive 60
+    volumes:
+      - redis-data-v2:/data
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: "0.5"
+    networks:
+      - swaadstack-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Redis Commander (Dev Only) ──
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: swaadstack-redis-ui-v2
+    ports:
+      - "8082:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - dev  # Only starts with: docker compose --profile dev up
+    networks:
+      - swaadstack-network
+
+# ── Volumes ──
+volumes:
+  redis-data-v2:
+    driver: local
+
+# ── Networks ──
+networks:
+  swaadstack-network:
+    driver: bridge
